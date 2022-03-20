@@ -1,0 +1,5 @@
+docker build --build-arg reqUrl=http://192.168.1.109:5000 exe13 -t backend_new
+docker build --build-arg backendUrl=http://192.168.1.109:8080 exe12 -t frontend_new
+
+docker run -it --rm -p 8080:8080 backend_new
+docker run -it --rm -p 5000:5000 frontend_new

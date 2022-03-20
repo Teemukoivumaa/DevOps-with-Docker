@@ -1,0 +1,17 @@
+FROM ubuntu:latest
+EXPOSE 5000
+
+RUN apt-get update && apt-get install -y curl
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+RUN apt install nodejs
+RUN node -v && npm -v
+
+WORKDIR /usr/src/myapp
+COPY ./example-frontend /usr/src/myapp
+
+RUN npm install
+RUN npm install -g serve
+
+RUN npm run build 
+
+CMD ["serve", "-s", "-l", "5000", "build"]
