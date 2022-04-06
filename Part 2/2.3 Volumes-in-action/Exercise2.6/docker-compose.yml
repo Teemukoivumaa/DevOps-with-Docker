@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+    redis:
+        image: redis
+        container_name: redis
+    
+    frontend:
+        build: 
+            context: ./frontend
+            args: 
+                - backendUrl=http://192.168.1.109:8080
+        ports:
+            - 5000:5000
+        container_name: frontend
+    
+    backend:
+        build:
+            context: ./backend
+            args:
+                - reqUrl=http://192.168.1.109:5000
+                - redisUrl=redis
+                - postHost=db_redmine
+                - postUser=postgres
+                - postPass=example
+                - postDb=postgres
+        ports:
+            - 8080:8080
+        container_name: backend
+    
+    db:
+        image: postgres:13.2-alpine
+        restart: unless-stopped
+        environment:
+            POSTGRES_PASSWORD: example
+        container_name: db_redmine
+        volumes:
+            - database:/var/lib/postgresql/data
+
+volumes:
+  database:
