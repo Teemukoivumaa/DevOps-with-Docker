@@ -1,0 +1,24 @@
+FROM golang:1.18
+EXPOSE 8080
+
+WORKDIR /usr/src/app
+COPY ./example-backend /usr/src/app
+
+RUN go build
+RUN go test ./...
+
+ARG reqUrl
+ARG redisUrl
+ARG postHost
+ARG postUser
+ARG postPass
+ARG postDb
+
+ENV REQUEST_ORIGIN $reqUrl
+ENV REDIS_HOST $redisUrl
+ENV POSTGRES_HOST $postHost
+ENV POSTGRES_USER $postUser
+ENV POSTGRES_PASSWORD $postPass
+ENV POSTGRES_DATABASE $postDb
+
+CMD ./server

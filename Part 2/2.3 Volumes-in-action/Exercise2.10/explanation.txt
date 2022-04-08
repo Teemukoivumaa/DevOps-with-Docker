@@ -1,0 +1,3 @@
+In the docker-compose file I needed to set the backendUrl for the frontend to "http://192.168.1.106:80/api", so it goes throught nginx instead of straight throught to the backend.
+Also needed to change the request origin to "http://192.168.1.106" so it accepts all calls from that address in order to eliminate CORS problems.
+
