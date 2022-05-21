@@ -1,0 +1,19 @@
+FROM ubuntu:latest
+EXPOSE 5000
+ARG backendUrl
+
+WORKDIR /usr/src/myapp
+COPY ./example-frontend /usr/src/myapp
+
+RUN apt-get update && apt-get install -y curl && \
+    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+    apt-get install -y nodejs && \
+    node -v && npm -v && \
+    npm install && \
+    npm install -g serve && \
+    REACT_APP_BACKEND_URL=$backendUrl npm run build && \
+    useradd -m appuser
+
+USER appuser
+
+CMD ["serve", "-s", "-l", "5000", "build"]

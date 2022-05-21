@@ -1,0 +1,37 @@
+FROM golang:1.16-alpine as builder
+
+ENV REQUEST_ORIGIN=http://127.0.0.1:5000/
+
+WORKDIR /usr/src/app
+COPY ./example-backend /usr/src/app
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" . && adduser -D appuser
+
+FROM scratch as main
+
+WORKDIR /usr/src/app
+
+ARG reqUrl
+ARG redisUrl
+ARG postHost
+ARG postUser
+ARG postPass
+ARG postDb
+
+ENV REQUEST_ORIGIN $reqUrl
+ENV REDIS_HOST $redisUrl
+ENV POSTGRES_HOST $postHost
+ENV POSTGRES_USER $postUser
+ENV POSTGRES_PASSWORD $postPass
+ENV POSTGRES_DATABASE $postDb
+
+COPY --from=builder /etc/passwd /etc/passwd
+
+COPY --from=builder /usr/src/app/server /usr/bin/
+
+USER appuser
+
+EXPOSE 8080
+
+CMD ["server"]
+

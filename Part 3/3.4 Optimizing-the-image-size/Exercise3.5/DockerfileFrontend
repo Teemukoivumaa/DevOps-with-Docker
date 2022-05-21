@@ -1,0 +1,14 @@
+FROM node:16-alpine
+EXPOSE 5000
+ARG backendUrl
+
+WORKDIR /usr/src/myapp
+COPY ./example-frontend /usr/src/myapp
+
+RUN npm install && \
+    npm install -g serve && \
+    adduser -D appuser && \
+    REACT_APP_BACKEND_URL=$backendUrl npm run build 
+USER appuser
+
+CMD ["serve", "-s", "-l", "5000", "build"]
